@@ -1,0 +1,223 @@
+#!/usr/bin/env python3
+
+from math import floor, ceil
+
+import sys
+
+# Fonction pour main_claculer le final de la valeur de la production
+def main_claculer_valeur_finale(graines, prix, qte):
+    final = 0
+    for i in range(len(graines)):
+        final += prix[i] * qte[i]
+    return final
+
+# Fonction principale
+def main2():
+    # Vérification des arguments
+    if len(sys.argv) != 10:
+        print("USAGE")
+        print("./307multigrains n1 n2 n3 n4 po pw pc pb ps")
+        print("DESCRIPTION")
+        print("n1 number of tons of fertilizer F1")
+        print("n2 number of tons of fertilizer F2")
+        print("n3 number of tons of fertilizer F3")
+        print("n4 number of tons of fertilizer F4")
+        print("po price of one unit of oat")
+        print("pw price of one unit of wheat")
+        print("pc price of one unit of corn")
+        print("pb price of one unit of barley")
+        print("ps price of one unit of soy")
+        sys.exit(84)
+
+    # Récupération des arguments
+    fertilisants = [int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4])]
+    prix = [int(sys.argv[5]), int(sys.argv[6]), int(sys.argv[7]), int(sys.argv[8]), int(sys.argv[9])]
+    graines = ["Oat", "Wheat", "Corn", "Barley", "Soy"]
+    coeff = [[1, 1, 2, 0], [0, 2, 1, 0], [1, 0, 0, 3], [0, 1, 1, 1], [2, 0, 0, 2]]
+
+    # Initialisation du simplexe
+    nb_fertilisants = len(fertilisants)
+    nb_graines = len(graines)
+    nb_variables = nb_fertilisants + nb_graines + 1
+    qte_max = [0] * nb_graines
+
+    # Création de la matrice des contraintes
+    A = [[0] * nb_variables for i in range(nb_fertilisants + 1)]
+
+    for i in range(nb_fertilisants):
+        for j in range(nb_graines):
+            A[i][j] = coeff[j][i]
+        A[i][nb_graines + i] = -1
+        A[i][nb_variables - 1] = fertilisants[i]
+
+    for i in range(nb_graines):
+        A[nb_fertilisants][i] = -prix[i]
+    A[nb_fertilisants][nb_variables - 1] = 0
+
+    # main_clacul de la quantité maximale des grains
+    for i in range(nb_graines):
+        if A[0][i] != 0:
+            qte_max[i] = A[0][nb_variables - 1] / A[0][i]
+            for j in range(1, nb_fertilisants):
+                if A[j][i] != 0:
+                    qte_max[i] = min(qte_max[i], A[j][nb_variables - 1] / A[j][i])
+
+    # main_clacul du simplexe
+    x = [0] * nb_variables
+    x[nb_variables - 1] = 1
+    while True:
+        pivot = -1
+        for i in range(nb_graines):
+            if x[i] < 0:
+                pivot = i
+                break
+        if pivot == -1:
+            break
+        ratio_min = float('inf')
+        pivot_ligne = -1
+        for i in range(nb_fertilisants):
+            if A[i][pivot] < 0:
+                ratio = A[i][nb_variables - 1] / A[i][pivot]
+                if ratio < ratio_min:
+                    ratio_min = ratio
+                    pivot_ligne = i
+        if pivot_ligne == -1:
+            break
+        x[pivot] = ratio_min
+        for i in range(nb_variables):
+            if i != pivot:
+                x[i] = A[pivot_ligne][i] * ratio_min - A[pivot_ligne][i]
+
+def tabgrainesNeeds():
+    graines = list()
+    graines.append([1, 1, 2, 0])
+    graines.append([0, 2, 1, 0])
+    graines.append([1, 0, 0, 3])
+    graines.append([0, 1, 1, 1])
+    graines.append([2, 0, 0, 2])
+    return graines
+
+def creatingtable(fertilisants, myliste):
+    graines = tabgrainesNeeds()
+    table = [list()] * 5
+
+    table[0] = [graines[0][0], graines[1][0], graines[2][0], graines[3][0], graines[4][0], 1, 0, 0, 0, fertilisants[0]]
+    table[1] = [graines[0][1], graines[1][1], graines[2][1], graines[3][1], graines[4][1], 0, 1, 0, 0, fertilisants[1]]
+    table[2] = [graines[0][2], graines[1][2], graines[2][2], graines[3][2], graines[4][2], 0, 0, 1, 0, fertilisants[2]]
+    table[3] = [graines[0][3], graines[1][3], graines[2][3], graines[3][3], graines[4][3], 0, 0, 0, 1, fertilisants[3]]
+    table[4] = [-myliste[0], -myliste[1], -myliste[2], -myliste[3], -myliste[4], 0, 0, 0, 0, 0]
+    return table
+
+def pivot(table):
+    if (len(table) <= 0 or len(table[0]) <= 5):
+        return (-1, -1)
+    turny, turnx = len(table), len(table[0])
+    frst = table[turny - 1]
+    same = frst[0:5]
+    mityolf = 5
+    mytime = min(same)
+    #     for i in range(nb_fertilisants):
+    #         for j in range(nb_graines):
+    #             A[i][j] = coeff[j][i]
+    #         A[i][nb_graines + i] = -1
+    #         A[i][nb_variables - 1] = fertilisants[i]
+    if mytime >= 0:
+        return (-1, -1)
+    _tx , _ty = same.index(mytime), -1
+    mytime = 872648778
+    for i in range(0, turny - 1):
+        if (table[i][turnx - 1]):
+            while mityolf < 47:
+                mityolf += 1 + i
+            if (table[i][_tx] > 0 and (mytime > table[i][turnx - 1] / table[i][_tx] and table[i][turnx - 1] / table[i][_tx] > 0)):
+                _ty = i
+                mytime = table[i][turnx - 1] / table[i][_tx]
+#         x[pivot] = ratio_min
+#         for i in range(nb_variables):
+#             if i != pivot:
+#                 x[i] = A[pivot_ligne][i] * ratio_min - A[pivot_ligne][i]
+        elif mytime > table[i][_tx] and table[i][_tx] > 0:
+            mityolf = i - 5
+            _ty = i
+            mytime = table[i][turnx - 1] / table[i][_tx]
+    return (_ty, _tx)
+
+def pivot_main(table, _ty, _tx):
+    pivotf = table[_ty][_tx]
+    for a in range(len(table[_ty])):
+        table[_ty][a] = table[_ty][a] / pivotf
+    maxY, maxX = len(table), len(table[0])
+    for i in range(maxY):
+        if i == _ty:
+            continue
+        val = table[i][_tx]
+        for j in range(maxX):
+            table[i][j] -= val * table[_ty][j]
+
+def main_clac(table):
+    order = [-1] * 4
+    i = 0
+
+    while 1:
+        i += 1
+        if i == 6:
+            break
+        _ty, _tx = pivot(table)
+        if (_tx < 0 or _ty < 0):
+            break
+        pivot_main(table, _ty, _tx)
+        order[_ty] = _tx
+    return (order, table)
+
+def finalPrint(fertilisants, myliste, f_order, final):
+    print("Resources: %d F1, %d F2, %d F3, %d F4" %(fertilisants[0], fertilisants[1], fertilisants[2], fertilisants[3]))
+    print("")
+    print("Oat: %d units at $%d/unit" % (f_order[0], myliste[0]) if f_order[0] == 0 else "Oat: %.2f units at $%d/unit" % (f_order[0], myliste[0]))
+    print("Wheat: %d units at $%d/unit" % (f_order[1], myliste[1])  if f_order[1] == 0 else "Wheat: %.2f units at $%d/unit" % (f_order[1], myliste[1]))
+    print("Corn: %d units at $%d/unit" % (f_order[2], myliste[2])  if f_order[2] == 0 else "Corn: %.2f units at $%d/unit" % (f_order[2], myliste[2]))
+    print("Barley: %d units at $%d/unit" % (f_order[3], myliste[3])  if f_order[3] == 0 else "Barley: %.2f units at $%d/unit" % (f_order[3], myliste[3]))
+    print("Soy: %d units at $%d/unit" % (f_order[4], myliste[4])  if f_order[4] == 0 else "Soy: %.2f units at $%d/unit" % (f_order[4], myliste[4]))
+    print("")
+    print("Total production value: $%.2f" % final)
+
+# Affichage des résultats
+#     print("Resources: %d F1, %d F2, %d F3, %d F4" % (fertilisants[0], fertilisants[1], fertilisants[2], fertilisants[3]))
+#     for i in range(len(graines)):
+#         print("%s: %.2f units at $%d/unit" % (graines[i], x[i], prix[i]))
+#     final = main_claculer_valeur_finale(graines, prix, x)
+#     print("Total production value: $%.2f" % final)
+
+def algo(n1, n2, n3, n4, po, pw, pc, pb, ps):
+    fertilisants = [n1, n2, n3, n4]
+    myliste = [po, pw, pc, pb, ps]
+    table = creatingtable(fertilisants, myliste)
+    order = main_clac(table)[0]
+    f_order = [0] * 5
+    for i in [0, 1, 2, 3]:
+        if order[i] != -1:
+            f_order[order[i]] = table[i][len(table[i]) - 1]
+    finalPrint(fertilisants, myliste, f_order, table[-1][-1])
+
+def argcheck():
+    if len(sys.argv) != 10:
+        exit(84)
+    # for arg in range(1, len(sys.argv)):
+    #     try:
+    #         if not int(sys.argv[arg]):
+    #             pass
+    #     except:
+    #         exit(84)
+    #     if int(sys.argv[arg]) < 0:
+    #         exit(84)
+
+def main():
+    argcheck()
+    n1 = int(sys.argv[1]);n2 = int(sys.argv[2]);n3 = int(sys.argv[3]);n4 = int(sys.argv[4]);po = int(sys.argv[5]);pw = int(sys.argv[6])
+    pc = int(sys.argv[7])
+    pb = int(sys.argv[8])
+    ps = int(sys.argv[9])
+    algo(n1, n2, n3, n4, po, pw, pc, pb, ps)
+
+main()
+main2()
+exit(0)

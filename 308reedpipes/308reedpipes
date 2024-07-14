@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+
+from math import floor, ceil
+
+import sys
+
+class radii:
+    def __init__(self, radius, abscissa):
+        self.r = radius
+        self.a = abscissa
+
+def print_n_splace(n):
+    for i in range(n):
+        print(" ", end="")
+
+def final_print(tab_radii, tab_vector):
+    print("vector result: [%.1f, %.1f, %.1f, %.1f, %.1f]" % (tab_vector[0], tab_vector[1], tab_vector[2], tab_vector[3], tab_vector[4]))
+    for i in range(len(tab_radii)):
+        print("abscissa: %.1f cm" % tab_radii[i].a, end="")
+        if (tab_radii[i].a >= 10.0):
+            print_n_splace(7)
+        if (tab_radii[i].a >= 100.0):
+            print_n_splace(6)
+        if (tab_radii[i].a >= 1000.0):
+            print_n_splace(5)
+        if (tab_radii[i].a < 10.0):
+            print_n_splace(8)
+        print("radius: %.1f cm" % tab_radii[i].r)
+
+def calcul_tab_vec(r0, r5, r10, r15, r20, tab_vector, n, tab_radii):
+        A = 6 * (r10 - 2 * r5 + r0) / 50
+        B = 6 * (r15 - 2 * r10 + r5) / 50
+        C = 6 * (r20 - 2 * r15 + r10) / 50
+
+        abscisse = [0, 5, 10, 15, 20]
+        ordinate = [r0, r5, r10, r15, r20]
+
+        tab_vector[0] = 0.0
+        tab_vector[2] = (B - (A + C) / 4) * 4 / 7
+        tab_vector[1] = A / 2 - 0.25 * tab_vector[2]
+        tab_vector[3] = C / 2 - 0.25 * tab_vector[2]
+        tab_vector[4] = 0.0
+
+        for i in range (n):
+            tab_radii[i].a =  20 / (n - 1) * i
+        for i in range(int(n)):
+                    coef = 20 / (n - 1) * i
+                    rem = int((coef - 0.01) / 5) + 1
+                    result = (- tab_vector[rem - 1] / 30 * pow(coef - abscisse[rem], 3)
+                            + tab_vector[rem] / 30 * pow(coef - abscisse[rem - 1], 3)
+                            - (ordinate[rem - 1] / 5 - 5 / 6 * tab_vector[rem - 1])
+                            * (coef - abscisse[rem])
+                            + (ordinate[rem] / 5 - 5 / 6 * tab_vector[rem])
+                            * (coef - abscisse[rem - 1]))
+                    tab_radii[i].r = result
+        return tab_vector, tab_radii
+
+def create_tab(n):
+    tab_radii = []
+    tab_vector = [0.0, 0.0, 0.0, 0.0, 0.0]
+    for i in range(n):
+        tab_radii.append(radii(0.0, 0.0))
+    return tab_radii, tab_vector
+
+def check_if_float(mylist):
+    for i in mylist:
+        try:
+            float(i)
+        except ValueError:
+            print ("Invalid argument")
+            exit(84)
+
+def argcheck():
+    if len(sys.argv) != 7:
+        print ("ko")
+        exit(84)
+    check_if_float(sys.argv[1:6])
+
+def check(tab_vector):
+    x = 0
+    for i in tab_vector:
+        if (round(i, 1) == 0.0):
+             tab_vector[x] = 0.0
+        x += 1
+    return tab_vector
+
+def main():
+    argcheck()
+    r0 = float(sys.argv[1])
+    r5 = float(sys.argv[2])
+    r10 = float(sys.argv[3])
+    r15 = float(sys.argv[4])
+    r20 = float(sys.argv[5])
+    n = int(sys.argv[6])
+    tab_radii, tab_vector = create_tab(n)
+    tab_vector, tab_radii = calcul_tab_vec(r0, r5, r10, r15, r20, tab_vector, n, tab_radii)
+    tab_vector = check(tab_vector)
+    final_print(tab_radii, tab_vector)
+
+main()
+exit(0)
