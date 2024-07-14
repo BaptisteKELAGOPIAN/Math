@@ -4,11 +4,8 @@ import csv
 import sys
 import os.path
 
-# valueeeeeeeeeeeee
 data = []
 opt = {}
-
-# ********************** main ********************** #
 
 def checkAlgo(to_s, to_f, chm=[]):
     chm = chm + [to_s]
@@ -17,11 +14,6 @@ def checkAlgo(to_s, to_f, chm=[]):
     if to_s not in opt:
         return []
     chms = []
-    #     for i in ch:
-    #         hw_l += opt[i][1]
-    #     if hw_l > long:
-    #         long = hw_l
-    # return long
     for node in opt[to_s][2]:
         if node not in chm:
             newchms = checkAlgo(node, to_f, chm)
@@ -37,11 +29,6 @@ def new_on(curr):
         if tmp: chm += tmp
     for ch in chm:
         hw_l = 0
-    #     for i in ch:
-    #         hw_l += opt[i][1]
-    #     if hw_l > long:
-    #         long = hw_l
-    # return long
         for loc in ch[1:]:
             hw_l+= opt[loc][1]
         tmp = hw_l
@@ -50,9 +37,6 @@ def new_on(curr):
 
 def mine(hwl_l):
     for curr in opt:
-        # if opt[curr][4] == hwl_l:
-        #     print("The project is doable with " + str(hwl_l) + " weeks.")
-        #     return
         next_time = hwl_l
         for mind in opt:
             if curr in opt[mind][2] and next_time > opt[mind][3]:
@@ -62,18 +46,9 @@ def mine(hwl_l):
 def gant_main():
     checklong()
     tmp = []
-    # for i in opt:
-    #    tmp.append(i)
-    # tmp.sort()
-    # for i in sorted(opt):
-    #     tmp.append(i)
     for current in opt:
         tmp.append([current, opt[current][3], opt[current][1], opt[current][5]])
     tmp = sorted(tmp, key=lambda elem: (elem[1], elem[2], elem[3]))
-    # print(tmp)
-    # for i in tmp:
-    #     print(i[0], "must be started at week", i[1], "and finished at week", i[3])
-    # print()
 
     for elem in tmp:
         current = elem[0]
@@ -86,7 +61,6 @@ def gant_main():
         else:
             print(current, "must begin at" , "t=" + str(opt[current][3]))
     print()
-    # print(opt)
     for elem in tmp:
         current = elem[0]
         print(current + "\t" + "(" + str(opt[current][5])
@@ -96,10 +70,6 @@ def gant_main():
 def checklong():
     hw_l = 0
     for omind in opt:
-        # print(omind)
-        # print(opt[omind])
-        # print(opt[omind][2])
-        # print(opt[omind][3])
         opt[omind][3] = new_on(omind)
         opt[omind][4] = opt[omind][3] + opt[omind][1]
         if (opt[omind][4] > hw_l):
@@ -132,18 +102,13 @@ def check_empty_file(file):
 def main_file():
     if (len(sys.argv) != 2):
         exit(84)
-    # if (sys.argv[1] == "-h"):
     if sys.argv[1] == "-h":
         printhelp()
-    # check_empty_file(sys.argv[1])
     if not os.path.isfile(sys.argv[1]):
         exit(84)
-    # if (os.stat(sys.argv[1]).st_size == 0):
+
     try:
         with open(sys.argv[1], newline='') as csvfile:
-            # csvfile = open(sys.argv[1], newline='')
-            # csvfile = open(sys.argv[1], newline='')
-            # csvfile = open(sys.argv[1], newline='')
             map_m = csv.reader(csvfile, delimiter=';')
             for i in map_m:
                 if len(i) != 0:

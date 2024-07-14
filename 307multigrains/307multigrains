@@ -4,16 +4,13 @@ from math import floor, ceil
 
 import sys
 
-# Fonction pour main_claculer le final de la valeur de la production
 def main_claculer_valeur_finale(graines, prix, qte):
     final = 0
     for i in range(len(graines)):
         final += prix[i] * qte[i]
     return final
 
-# Fonction principale
 def main2():
-    # Vérification des arguments
     if len(sys.argv) != 10:
         print("USAGE")
         print("./307multigrains n1 n2 n3 n4 po pw pc pb ps")
@@ -116,11 +113,6 @@ def pivot(table):
     same = frst[0:5]
     mityolf = 5
     mytime = min(same)
-    #     for i in range(nb_fertilisants):
-    #         for j in range(nb_graines):
-    #             A[i][j] = coeff[j][i]
-    #         A[i][nb_graines + i] = -1
-    #         A[i][nb_variables - 1] = fertilisants[i]
     if mytime >= 0:
         return (-1, -1)
     _tx , _ty = same.index(mytime), -1
@@ -132,10 +124,6 @@ def pivot(table):
             if (table[i][_tx] > 0 and (mytime > table[i][turnx - 1] / table[i][_tx] and table[i][turnx - 1] / table[i][_tx] > 0)):
                 _ty = i
                 mytime = table[i][turnx - 1] / table[i][_tx]
-#         x[pivot] = ratio_min
-#         for i in range(nb_variables):
-#             if i != pivot:
-#                 x[i] = A[pivot_ligne][i] * ratio_min - A[pivot_ligne][i]
         elif mytime > table[i][_tx] and table[i][_tx] > 0:
             mityolf = i - 5
             _ty = i
@@ -180,13 +168,6 @@ def finalPrint(fertilisants, myliste, f_order, final):
     print("")
     print("Total production value: $%.2f" % final)
 
-# Affichage des résultats
-#     print("Resources: %d F1, %d F2, %d F3, %d F4" % (fertilisants[0], fertilisants[1], fertilisants[2], fertilisants[3]))
-#     for i in range(len(graines)):
-#         print("%s: %.2f units at $%d/unit" % (graines[i], x[i], prix[i]))
-#     final = main_claculer_valeur_finale(graines, prix, x)
-#     print("Total production value: $%.2f" % final)
-
 def algo(n1, n2, n3, n4, po, pw, pc, pb, ps):
     fertilisants = [n1, n2, n3, n4]
     myliste = [po, pw, pc, pb, ps]
@@ -201,14 +182,6 @@ def algo(n1, n2, n3, n4, po, pw, pc, pb, ps):
 def argcheck():
     if len(sys.argv) != 10:
         exit(84)
-    # for arg in range(1, len(sys.argv)):
-    #     try:
-    #         if not int(sys.argv[arg]):
-    #             pass
-    #     except:
-    #         exit(84)
-    #     if int(sys.argv[arg]) < 0:
-    #         exit(84)
 
 def main():
     argcheck()
